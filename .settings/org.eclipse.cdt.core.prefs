@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/org.eclipse.cdt.cross.arm.gnu.summon.windows.toolchain.base.985589336/PATH/delimiter=;
+environment/project/org.eclipse.cdt.cross.arm.gnu.summon.windows.toolchain.base.985589336/PATH/operation=append
+environment/project/org.eclipse.cdt.cross.arm.gnu.summon.windows.toolchain.base.985589336/PATH/value=C\:\\yagarto-20121222\\bin;C\:\\yagarto-tools-20121018\\bin
+environment/project/org.eclipse.cdt.cross.arm.gnu.summon.windows.toolchain.base.985589336/append=true
+environment/project/org.eclipse.cdt.cross.arm.gnu.summon.windows.toolchain.base.985589336/appendContributed=true
