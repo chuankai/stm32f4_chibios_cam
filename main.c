@@ -28,6 +28,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "chprintf.h"
+#include "SSD1289.h"
 
 /*
  * This is a periodic thread that does absolutely nothing except flashing
@@ -70,7 +71,12 @@ int main(void) {
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 
-  //chprintf((BaseChannel *)&SD2, "about to create thread\r\n");
+  /*
+   * Initialize the LCD
+   */
+  LCD_Init_SSD1289();
+  LCD_Clear(0x07E0);
+
   /*
    * Creates the example thread.
    */

@@ -77,6 +77,7 @@ LDSCRIPT= $(PORTLD)/STM32F407xG.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
+STLIB = STM32F4xx_StdPeriph_Driver
 CSRC = $(PORTSRC) \
        $(KERNSRC) \
        $(TESTSRC) \
@@ -84,7 +85,13 @@ CSRC = $(PORTSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(CHIBIOS)/os/various/chprintf.c \
-       main.c
+       main.c \
+	   SSD1289.c \
+	   AsciiLib.c \
+	   $(STLIB)/src/stm32f4xx_gpio.c \
+	   $(STLIB)/src/stm32f4xx_rcc.c \
+	   $(STLIB)/src/stm32f4xx_fsmc.c
+
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -169,7 +176,7 @@ DDEFS =
 DADEFS =
 
 # List all default directories to look for include files here
-DINCDIR =
+DINCDIR = $(STLIB)/inc
 
 # List the default directory to look for the libraries here
 DLIBDIR =
