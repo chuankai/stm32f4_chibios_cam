@@ -39,8 +39,6 @@ static msg_t Thread1(void *arg) {
   (void)arg;
 
   chRegSetThreadName("blinker");
-  chprintf((BaseChannel *)&SD2, "blink started\r\n");
-
   while (TRUE) {
     palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
     chThdSleepMilliseconds(500);
@@ -78,7 +76,8 @@ int main(void) {
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
-  chprintf((BaseChannel *)&SD2, "Init done\r\n");
+  chprintf((BaseChannel *)&SD2, "initialization done\r\n");
+
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state, when the button is
