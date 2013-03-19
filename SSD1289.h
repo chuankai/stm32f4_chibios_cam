@@ -29,7 +29,6 @@ void LCD_Init_SSD1289(void);
 void LCD_SetFunctionalState(FunctionalState NewState);
 void LCD_SetCursor(uint16_t PosX,uint16_t PosY);
 void LCD_Clear(uint16_t Color);
-void LCD_BackLight(uint8_t Percent);
 void LCD_SetPoint(uint16_t PosX, uint16_t PosY, uint16_t Color);
 void LCD_PutChar(uint16_t PosX, uint16_t PosY, unsigned char c, uint16_t CharColor,
 				 uint16_t BackColor);

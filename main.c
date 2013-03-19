@@ -29,24 +29,7 @@
 #include "hal.h"
 #include "chprintf.h"
 #include "SSD1289.h"
-
-/*
- * This is a periodic thread that does absolutely nothing except flashing
- * a LED.
- */
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg) {
-
-  (void)arg;
-
-  chRegSetThreadName("blinker");
-  while (TRUE) {
-    palSetPad(GPIOD, GPIOD_LED3);       /* Orange.  */
-    chThdSleepMilliseconds(500);
-    palClearPad(GPIOD, GPIOD_LED3);     /* Orange.  */
-    chThdSleepMilliseconds(500);
-  }
-}
+#include "cam.h"
 
 /*
  * Application entry point.
@@ -78,9 +61,9 @@ int main(void) {
   LCD_Clear(0x07E0);
 
   /*
-   * Creates the example thread.
+   * Creates the camera thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  CreateCamThread();
 
   chprintf((BaseChannel *)&SD2, "initialization done\r\n");
 
@@ -93,4 +76,9 @@ int main(void) {
   while (TRUE) {
     chThdSleepMilliseconds(500);
   }
+}
+
+void assert_failed(uint8_t* file, uint32_t line)
+{
+	  chprintf((BaseChannel *)&SD2, "Assert failed: %s %d\r\n", file, line);
 }

@@ -209,7 +209,7 @@ void LCD_Init_SSD1289(void)
 void LCD_SetFunctionalState(FunctionalState NewState)
 {
 	// Zapne LCD
-	if(NewState == ENABLE);
+	if(NewState == ENABLE)
 	{
 		// R07h = 0021h (GON = 1,DTE = 0,D[1:0] = 01)
 		LCD_WriteReg(0x0007, 0x0021);
@@ -243,69 +243,6 @@ void LCD_SetFunctionalState(FunctionalState NewState)
 
 	}
 }
-
-static void LCD_InitBackLight(void)
-{
-/*
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-
-	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO , ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-
-	// GPIOB:  PB5(TIM3 CH2) alternate function push-pull
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_5 ;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
-
-
-	// TIM3CLK = 36 MHz, Prescaler = 35, TIM3 counter clock = 1 MHz
-	// TIM3 ARR Register = 999 => TIM3 Frequency = TIM3 counter clock/(ARR + 1)
-	// TIM3 Frequency = 1 KHz.
-	// TIM3 Channel2 duty cycle = (TIM3_CCR2/ TIM3_ARR)* 100
-	// 1MHz TIM3 counter clock = 1MHz
-	TimerPeriod = (uint16_t) (SystemCoreClock / 1000000) - 1;
-
-	// 1Mhz/(999 + 1 )=1kHz
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
-	TIM_TimeBaseStructure.TIM_Prescaler = TimerPeriod;
-	TIM_TimeBaseStructure.TIM_Period = 999;   					// TIM3 ARR Register
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
-
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_Pulse = Channel2Pulse;
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OC2Init(TIM3, &TIM_OCInitStructure);
-
-	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
-
-	TIM_ARRPreloadConfig(TIM3, ENABLE);
-	TIM_Cmd(TIM3, ENABLE);
-*/
-}
-
-
-
-
-/**
-  * @brief 	Set LCD Module backlight from 0 to 100%
-  * @param	Percent: 0-100(%) from brighntess of backlight 
-  * @retval	None
- */
-void LCD_BackLight(uint8_t Percent)
-{
-
-}
-
-
 
 /**
   * @brief 	Write data to the specific register of LCD Module

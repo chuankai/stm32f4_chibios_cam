@@ -90,7 +90,13 @@ CSRC = $(PORTSRC) \
 	   AsciiLib.c \
 	   $(STLIB)/src/stm32f4xx_gpio.c \
 	   $(STLIB)/src/stm32f4xx_rcc.c \
-	   $(STLIB)/src/stm32f4xx_fsmc.c
+	   $(STLIB)/src/stm32f4xx_fsmc.c \
+	   $(STLIB)/src/misc.c \
+	   $(STLIB)/src/stm32f4xx_dcmi.c \
+	   $(STLIB)/src/stm32f4xx_dma.c \
+	   cam.c \
+	   OV7670.c \
+	   utility.c
 
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
