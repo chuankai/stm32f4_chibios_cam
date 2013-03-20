@@ -37,7 +37,7 @@
 #include "stm32f4xx_flash.h"
 #include "stm32f4xx_fsmc.h"
 #include "stm32f4xx_hash.h"
-#include "stm32f4xx_gpio.h"
+//#include "stm32f4xx_gpio.h"
 #include "stm32f4xx_i2c.h"
 #include "stm32f4xx_iwdg.h"
 #include "stm32f4xx_pwr.h"
@@ -54,9 +54,9 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Uncomment the line below to expanse the "assert_param" macro in the 
+/* Uncomment the line below to expanse the "assert_param" macro in the
    Standard Peripheral Library drivers code */
-/* #define USE_FULL_ASSERT    1 */
+#define USE_FULL_ASSERT    1
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT
@@ -65,7 +65,7 @@
   * @brief  The assert_param macro is used for function's parameters check.
   * @param  expr: If expr is false, it calls assert_failed function
   *   which reports the name of the source file and the source
-  *   line number of the call that failed. 
+  *   line number of the call that failed.
   *   If expr is true, it returns no value.
   * @retval None
   */

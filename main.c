@@ -51,9 +51,9 @@ int main(void)
 	 * Activates the serial driver 2 using the driver default configuration.
 	 * PA2(TX) and PA3(RX) are routed to USART2.
 	 */
-//  sdStart(&SD2, NULL);
-//  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
-//  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
+	sdStart(&SD2, NULL);
+	palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+	palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 	/*
 	 * Initialize the LCD
 	 */
@@ -63,8 +63,7 @@ int main(void)
 	/*
 	 * Creates the camera thread.
 	 */
-	CreateCamThread();
-
+	//CreateCamThread();
 	chprintf((BaseChannel *) &SD2, "initialization done\r\n");
 
 	/*
@@ -81,5 +80,5 @@ int main(void)
 
 void assert_failed(uint8_t* file, uint32_t line)
 {
-//	  chprintf((BaseChannel *)&SD2, "Assert failed: %s %d\r\n", file, line);
+	chprintf((BaseChannel *) &SD2, "Assert failed: %s %d\r\n", file, line);
 }

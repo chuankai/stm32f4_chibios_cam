@@ -89,15 +89,14 @@ CSRC = $(PORTSRC) \
        main.c \
 	   SSD1289.c \
 	   AsciiLib.c \
-	   $(STLIB)/src/stm32f4xx_gpio.c \
 	   $(STLIB)/src/stm32f4xx_rcc.c \
 	   $(STLIB)/src/stm32f4xx_fsmc.c \
 	   $(STLIB)/src/misc.c \
 	   $(STLIB)/src/stm32f4xx_dcmi.c \
 	   $(STLIB)/src/stm32f4xx_dma.c \
-	   cam.c \
-	   OV7670.c \
-	   utility.c
+#	   cam.c \
+#	   OV7670.c \
+#	   utility.c
 
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -183,7 +182,7 @@ DDEFS =
 DADEFS =
 
 # List all default directories to look for include files here
-DINCDIR = $(STLIB)/inc
+DINCDIR =  $(STLIB)/inc
 
 # List the default directory to look for the libraries here
 DLIBDIR =
@@ -200,7 +199,7 @@ DLIBS =
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DUSE_STDPERIPH_DRIVER
 
 # Define ASM defines here
 UADEFS =
