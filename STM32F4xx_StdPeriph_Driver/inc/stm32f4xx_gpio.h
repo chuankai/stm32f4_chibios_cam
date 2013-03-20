@@ -29,7 +29,8 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "app_stm32f4xx.h"
+#include "stlibdef.h"
+#include "stm32f4xx.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Driver
   * @{

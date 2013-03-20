@@ -17,6 +17,5 @@ extern void assert_failed(uint8_t* file, uint32_t line);
 
 int16_t I2C_Write(uint16_t I2CAddr, uint8_t Address, uint8_t Value);
 int16_t I2C_Read(uint16_t I2CAddr, uint8_t *Value);
-void Log(char *str);
-void LogP1(char *str, uint32_t p);
+
 #endif /* UTILITY_H_ */

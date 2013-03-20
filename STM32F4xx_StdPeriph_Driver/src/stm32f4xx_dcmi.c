@@ -79,6 +79,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include "stlibdef.h"
 #include "stm32f4xx_dcmi.h"
 #include "stm32f4xx_rcc.h"
 

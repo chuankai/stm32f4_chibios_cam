@@ -1,3 +1,5 @@
+#include "stlibdef.h"
+#include "st_stm32f4xx_conf.h"
 #include "SSD1289.h"
 
 static uint16_t TextColor = Black, BackColor = White;

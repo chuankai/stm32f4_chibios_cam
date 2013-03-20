@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
-#include "app_stm32f4xx.h"
+#include "stm32f4xx.h"
 #include "AsciiLib.h"
 
 // LCD -> FSMC_Bank1_NOR/SRAM1 and NE1 is like !CS

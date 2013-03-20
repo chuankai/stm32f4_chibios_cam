@@ -53,6 +53,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include "stlibdef.h"
 #include "stm32f4xx_rcc.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Driver
@@ -251,7 +252,7 @@ void RCC_HSEConfig(uint8_t RCC_HSE)
   * @note   This functions waits on HSERDY flag to be set and return SUCCESS if 
   *         this flag is set, otherwise returns ERROR if the timeout is reached 
   *         and this flag is not set. The timeout value is defined by the constant
-  *         HSE_STARTUP_TIMEOUT in stm32f4xx.h file. You can tailor it depending
+  *         HSE_STARTUP_TIMEOUT in st_stm32f4xx.h file. You can tailor it depending
   *         on the HSE crystal used in your application. 
   * @param  None
   * @retval An ErrorStatus enumeration value:
@@ -658,7 +659,7 @@ void RCC_MCO2Config(uint32_t RCC_MCO2Source, uint32_t RCC_MCO2Div)
  |---------------|----------------|----------------|-----------------|-----------------| 
  |7WS(8CPU cycle)|      NA        |      NA        |120 < HCLK <= 138|112 < HCLK <= 120| 
  +-------------------------------------------------------------------------------------+    
-   @note When VOS bit (in PWR_CR register) is reset to '0’, the maximum value of HCLK is 144 MHz.
+   @note When VOS bit (in PWR_CR register) is reset to '0ï¿½ the maximum value of HCLK is 144 MHz.
          You can use PWR_MainRegulatorModeConfig() function to set or reset this bit.
 
 @endverbatim
@@ -830,10 +831,10 @@ void RCC_PCLK2Config(uint32_t RCC_HCLK)
   * @note     If SYSCLK source is HSE, function returns values based on HSE_VALUE(**)
   * @note     If SYSCLK source is PLL, function returns values based on HSE_VALUE(**) 
   *           or HSI_VALUE(*) multiplied/divided by the PLL factors.         
-  * @note     (*) HSI_VALUE is a constant defined in stm32f4xx.h file (default value
+  * @note     (*) HSI_VALUE is a constant defined in st_stm32f4xx.h file (default value
   *               16 MHz) but the real value may vary depending on the variations
   *               in voltage and temperature.
-  * @note     (**) HSE_VALUE is a constant defined in stm32f4xx.h file (default value
+  * @note     (**) HSE_VALUE is a constant defined in st_stm32f4xx.h file (default value
   *                25 MHz), user has to ensure that HSE_VALUE is same as the real
   *                frequency of the crystal used. Otherwise, this function may
   *                have wrong result.

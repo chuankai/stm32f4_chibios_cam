@@ -17,7 +17,8 @@ int16_t I2C_Write(uint16_t I2CAddr, uint8_t Address, uint8_t Value)
 
 	txbuf[0] = Address;
 	txbuf[1] = Value;
-	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0, MS2ST(50));
+	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0,
+			MS2ST(50) );
 
 	return err;
 }
@@ -28,22 +29,14 @@ int16_t I2C_Read(uint16_t I2CAddr, uint8_t *Value)
 	uint8_t txbuf[1], rxbuf[1];
 
 	txbuf[0] = 0x0A;
-	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0, MS2ST(500));
+	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0,
+			MS2ST(50) );
 	if (err != RDY_OK)
 		return err;
-	err =  i2cMasterReceiveTimeout(&I2CD2, I2CAddr, rxbuf, sizeof(rxbuf), MS2ST(500));
+	err = i2cMasterReceiveTimeout(&I2CD2, I2CAddr, rxbuf, sizeof(rxbuf),
+			MS2ST(50) );
 	if (err == RDY_OK)
 		*Value = rxbuf[0];
 
 	return err;
-}
-
-void Log(char *str)
-{
-	  chprintf((BaseChannel *)&SD2, str);
-}
-
-void LogP1(char *str, uint32_t p)
-{
-	  chprintf((BaseChannel *)&SD2, str, p);
 }
