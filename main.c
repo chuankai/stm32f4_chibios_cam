@@ -63,8 +63,9 @@ int main(void)
 	/*
 	 * Creates the camera thread.
 	 */
-	//CreateCamThread();
-	chprintf((BaseChannel *) &SD2, "initialization done\r\n");
+	CreateCamThread();
+
+//	chprintf((BaseChannel *) &SD2, "Initialization done\r\n");
 
 	/*
 	 * Normal main() thread activity, in this demo it does nothing except
@@ -80,5 +81,5 @@ int main(void)
 
 void assert_failed(uint8_t* file, uint32_t line)
 {
-	chprintf((BaseChannel *) &SD2, "Assert failed: %s %d\r\n", file, line);
+//	chprintf((BaseChannel *) &SD2, "Assert failed: %s %d\r\n", file, line);
 }

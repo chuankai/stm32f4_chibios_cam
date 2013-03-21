@@ -89,13 +89,13 @@ CSRC = $(PORTSRC) \
        main.c \
 	   SSD1289.c \
 	   AsciiLib.c \
-	   $(STLIB)/src/stm32f4xx_rcc.c \
 	   $(STLIB)/src/stm32f4xx_fsmc.c \
-	   $(STLIB)/src/misc.c \
+	   $(STLIB)/src/stm32f4xx_rcc.c \
 	   $(STLIB)/src/stm32f4xx_dcmi.c \
 	   $(STLIB)/src/stm32f4xx_dma.c \
-#	   cam.c \
-#	   OV7670.c \
+	   $(STLIB)/src/misc.c \
+	   cam.c \
+	   OV7670.c \
 #	   utility.c
 
 

@@ -1,30 +1,27 @@
 /**
-  ******************************************************************************
-  * @file    OV7670.h
-  * @author  Juraj
-  * @version 
-  * @date    Jul 17, 2011
-  * @brief	 Control of  CMOS VGA Camera Module OV7670
-  ******************************************************************************
+ ******************************************************************************
+ * @file    OV7670.h
+ * @author  Juraj
+ * @version
+ * @date    Jul 17, 2011
+ * @brief	 Control of  CMOS VGA Camera Module OV7670
+ ******************************************************************************
 
-  ******************************************************************************
-  */
+ ******************************************************************************
+ */
 
 #ifndef OV7670_H_
 #define OV7670_H_
 
-
 /* Includes -------------------------------------------------- ----------------*/
 #include "stm32f4xx.h"
-
 
 /* Exported typedef -------------------------------------------------- ---------*/
 // Direction configuration of GPIO SIO_D pin
 typedef enum
 {
-	OUT = 0,
-	IN = 1,
-}Direction;
+	OUT = 0, IN = 1,
+} Direction;
 
 /* Exported define -------------------------------------------------- ----------*/
 #define Error			0
@@ -48,12 +45,6 @@ typedef enum
 #define RegNum		134
 #define CHANGE_REG	177
 
-// If Verify is defined, initialize of Camera Module registers is verified with
-// data stored in InitBuffer
-#define Camera_Verify		ENABLE
-// Choose between normal and debug camera operation
-//#define	Camera_Debug		ENABLE
-
 /* Exported macro -------------------------------------------------- -----------*/
 
 // Macro for retur Data and State of function
@@ -62,10 +53,9 @@ typedef struct
 	uint8_t Data;			// Data as return value
 
 	ErrorStatus State;		// Return State of function
-}ReturnState;
+} ReturnState;
 
 /* Exported variables -------------------------------------------------- -------*/
-
 
 /* Exported constants ---------------------------------------------------------*/
 

@@ -4,8 +4,8 @@
  *  Created on: 2013/3/18
  *      Author: Kyle.Lin
  */
-#include "stlibdef.h"
-#include "st_stm32f4xx_conf.h"
+
+#include "stm32f4xx_conf.h"
 #include "ch.h"
 #include "hal.h"
 #include "chprintf.h"
@@ -36,19 +36,25 @@ static msg_t CamThread(void *arg)
 
 	chRegSetThreadName("cam");
 
-	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
 
 	RCC_AHB1PeriphClockCmd(HOST_I2C_GPIO_CLOCK, ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin = HOST_I2C_SCL_PIN | HOST_I2C_SDA_PIN;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(HOST_I2C_GPIO, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = HOST_I2C_SCL_PIN | HOST_I2C_SDA_PIN;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+//	GPIO_Init(HOST_I2C_GPIO, &GPIO_InitStructure);
+//
+//	GPIO_PinAFConfig(HOST_I2C_GPIO, HOST_I2C_SCL_PINSRC, HOST_I2C_GPIO_AF );
+//	GPIO_PinAFConfig(HOST_I2C_GPIO, HOST_I2C_SDA_PINSRC, HOST_I2C_GPIO_AF );
 
-	GPIO_PinAFConfig(HOST_I2C_GPIO, HOST_I2C_SCL_PINSRC, HOST_I2C_GPIO_AF );
-	GPIO_PinAFConfig(HOST_I2C_GPIO, HOST_I2C_SDA_PINSRC, HOST_I2C_GPIO_AF );
+	palSetGroupMode(GPIOB, 0b0000110000000000,
+			0,
+			//FEDCBA9876543210
+			PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUDR_FLOATING | PAL_STM32_OSPEED_MID2);
+
 	ic.op_mode = OPMODE_I2C;
 	ic.clock_speed = 100000;
 	ic.duty_cycle = STD_DUTY_CYCLE;
@@ -70,12 +76,12 @@ static msg_t CamThread(void *arg)
 
 	while (TRUE)
 	{
-//		palSetPad(GPIOD, GPIOD_LED3);
-//		/* Orange.  */
-//		chThdSleepMilliseconds(500);
-//		palClearPad(GPIOD, GPIOD_LED3);
-//		/* Orange.  */
-//		chThdSleepMilliseconds(500);
+		palSetPad(GPIOD, GPIOD_LED3);
+		/* Orange.  */
+		chThdSleepMilliseconds(500);
+		palClearPad(GPIOD, GPIOD_LED3);
+		/* Orange.  */
+		chThdSleepMilliseconds(500);
 	}
 }
 

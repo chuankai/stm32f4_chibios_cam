@@ -1,12 +1,16 @@
-#include "stlibdef.h"
+#include "stm32f4xx_conf.h"
 #include "ch.h"
 #include "hal.h"
 #include "chprintf.h"
-#include "utility.h"
 #include "OV7670.h"
-#include "st_stm32f4xx_conf.h"
 
 #define CAM_I2C_ADDR		0x21
+
+// If Verify is defined, initialize of Camera Module registers is verified with
+// data stored in InitBuffer
+#define Camera_Verify		ENABLE
+// Choose between normal and debug camera operation
+#define	Camera_Debug		ENABLE
 
 uint8_t hodnota[4];
 __IO uint16_t RAM_Buffer[BuffSize];
@@ -192,15 +196,47 @@ const uint8_t InitBuffer2[4][2] =
 {
 { 0x11, 0xc0 },
 { 0x12, 0x02 },
-{ 0x70, 0x80 },
-{ 0x71, 0x00 }, };
+{ 0x70, 0xba },
+{ 0x71, 0x35 }, };
 
 /* Private function prototypes -----------------------------------------------*/
 static void Camera_HW_Init(void);
 static void Delay_us(uint16_t Time);
 static ErrorStatus OV7670_XCLK_Conf(void);
+static int16_t I2C_Write(uint16_t I2CAddr, uint8_t Address, uint8_t Value);
+static int16_t I2C_Read(uint16_t I2CAddr, uint8_t *Value);
 
 /* Private functions -------------------------------------------------- -------*/
+static int16_t I2C_Write(uint16_t I2CAddr, uint8_t Address, uint8_t Value)
+{
+	msg_t err = RDY_OK;
+	uint8_t txbuf[2];
+
+	txbuf[0] = Address;
+	txbuf[1] = Value;
+	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0,
+			MS2ST(50) );
+
+	return err;
+}
+
+static int16_t I2C_Read(uint16_t I2CAddr, uint8_t *Value)
+{
+	msg_t err;
+	uint8_t txbuf[1], rxbuf[1];
+
+	txbuf[0] = 0x0A;
+	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0,
+			MS2ST(50) );
+	if (err != RDY_OK)
+		return err;
+	err = i2cMasterReceiveTimeout(&I2CD2, I2CAddr, rxbuf, sizeof(rxbuf),
+			MS2ST(50) );
+	if (err == RDY_OK)
+		*Value = rxbuf[0];
+
+	return err;
+}
 
 /**
  * @brief 	Initialize CMOS VGA Camera Module OV7670
@@ -216,9 +252,9 @@ ErrorStatus Camera_Init(void)
 	// Initialize GPIO(DCMI) pins, MCO1(PA8) as output clock for XCLK
 	Camera_HW_Init();
 
-//    RetState = Camera_ReadReg(0x0A);
-//    if (RetState->State == SUCCESS)
-//    	  chprintf((BaseChannel *)&SD2, "PID:%04X\r\n", RetState->Data);
+	RetState = Camera_ReadReg(0x0A);
+	if (RetState->State == SUCCESS)
+		chprintf((BaseChannel *) &SD2, "PID:%d\r\n", RetState->Data);
 
 	// Reset all Camera Module registers to the default value
 	Camera_Reset();
@@ -227,7 +263,7 @@ ErrorStatus Camera_Init(void)
 // Choose between normal and debug camera operation
 #ifdef Camera_Debug
 	// for debug operation
-	for(i = 0; i < 4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		Camera_WriteReg(InitBuffer2[i][0], InitBuffer2[i][1]);
 	}
@@ -244,13 +280,13 @@ ErrorStatus Camera_Init(void)
 	// Choose between normal and debug camera operation
 	// for debug operation
 #ifdef Camera_Debug
-	for(i = 0; i < 4; i++)
+	for (i = 0; i < 4; i++)
 	{
 		RetState = Camera_ReadReg(InitBuffer2[i][0]);
-		if(RetState->Data == InitBuffer2[i][1] && RetState->State == SUCCESS)
-		Status = SUCCESS;
+		if (RetState->Data == InitBuffer2[i][1] && RetState->State == SUCCESS)
+			Status = SUCCESS;
 		else
-		Status = ERROR;
+			Status = ERROR;
 	}
 	// for normal operation
 #else
@@ -258,15 +294,16 @@ ErrorStatus Camera_Init(void)
 	{
 		RetState = Camera_ReadReg(Camera_REG[i][0]);
 		if (RetState->Data == Camera_REG[i][1] && RetState->State == SUCCESS)
-			Status = SUCCESS;
+		Status = SUCCESS;
 		else
-			Status = ERROR;
+		Status = ERROR;
 	}
 #endif
 #else
 	Status = SUCCESS;
 #endif
 
+	chprintf((BaseChannel *) &SD2, "Cam Init Res:%d\r\n", Status);
 	return (Status);
 }
 
@@ -328,7 +365,7 @@ ReturnState *Camera_ReadReg(uint8_t Address)
  */
 static void Camera_HW_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
 	DCMI_InitTypeDef DCMI_InitStructure;
 	DMA_InitTypeDef DMA_InitStructure;
 
@@ -346,46 +383,66 @@ static void Camera_HW_Init(void)
 
 	// Connect DCMI pins to AF13
 	// PORTA
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_DCMI );		// HSYNC
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_DCMI );		// PCLK
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_DCMI );		// D0
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_DCMI );	// D1
+//	GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_DCMI);		// HSYNC
+//	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_DCMI);		// PCLK
+//	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_DCMI);		// D0
+//	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_DCMI);	// D1
 
 	// PORTB
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_DCMI ); 	// D5
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_DCMI );		// VSYNC
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource8, GPIO_AF_DCMI ); 	// D6
-	GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_DCMI );// D7				   -
+//	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_DCMI); 	// D5
+//	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_DCMI);		// VSYNC
+//	GPIO_PinAFConfig(GPIOB, GPIO_PinSource8, GPIO_AF_DCMI); 	// D6
+//	GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_DCMI); // D7				   -
 
 	// PORTC
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource11, GPIO_AF_DCMI );	// D4
+//	GPIO_PinAFConfig(GPIOC, GPIO_PinSource11, GPIO_AF_DCMI);	// D4
 
 	// PORTE
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource0, GPIO_AF_DCMI );		// D2
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource1, GPIO_AF_DCMI );		// D3
+//	GPIO_PinAFConfig(GPIOE, GPIO_PinSource0, GPIO_AF_DCMI);		// D2
+//	GPIO_PinAFConfig(GPIOE, GPIO_PinSource1, GPIO_AF_DCMI);		// D3
 
 	// DCMI GPIO configuration
 	// D0..D1(PA9/10), HSYNC(PA4), PCLK(PA6)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_6 | GPIO_Pin_9
-			| GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_6 | GPIO_Pin_9
+//			| GPIO_Pin_10;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	palSetGroupMode(GPIOA, 0b0000011001010000,
+			0,
+			//FEDCBA9876543210
+			PAL_MODE_ALTERNATE(13) | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP | PAL_STM32_OSPEED_HIGHEST);
 
 	// D5..D7(PB6/8/9), VSYNC(PB7)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8
-			| GPIO_Pin_9;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8
+//			| GPIO_Pin_9;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	palSetGroupMode(GPIOB, 0b0000001111000000,
+			0,
+			//FEDCBA9876543210
+			PAL_MODE_ALTERNATE(13) | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP | PAL_STM32_OSPEED_HIGHEST);
 
 	// D4(PC11)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	palSetGroupMode(GPIOC, 0b0000100000000000,
+			0,
+			//FEDCBA9876543210
+			PAL_MODE_ALTERNATE(13) | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP | PAL_STM32_OSPEED_HIGHEST);
 
 	// D2..D3(PE0/1)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
-	GPIO_Init(GPIOE, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+//	GPIO_Init(GPIOE, &GPIO_InitStructure);
+
+	palSetGroupMode(GPIOE, 0b0000000000000011,
+			0,
+			//FEDCBA9876543210
+			PAL_MODE_ALTERNATE(13) | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP | PAL_STM32_OSPEED_HIGHEST);
 //---------------------------------------------------------------------------------------
 //	GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_DCMI); //d0
 //	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_DCMI);	//d1
@@ -489,47 +546,45 @@ static void Camera_HW_Init(void)
  * @param	None
  * @retval	None
  */
-void XCLK_ON(void)
-{
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	// Output HSI clock on MCO1 pin(PA8) ****************************************/
-	// Enable the GPIOA peripheral
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-
-	// Connect MCO1 pin to AF0
-	// Connect to AF0 is default after reset
-	// GPIO_PinAFConfig(GPIOA, GPIO_PinSource8, GPIO_AF_MCO);
-
-	// Configure MCO1 pin(PA8) in alternate function
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-	// HSI clock selected to output on MCO1 pin(PA8)
-	RCC_MCO1Config(RCC_MCO1Source_HSI, RCC_MCO1Div_1 );
-}
-
+//void XCLK_ON(void)
+//{
+////	GPIO_InitTypeDef GPIO_InitStructure;
+//
+//	// Output HSI clock on MCO1 pin(PA8) ****************************************/
+//	// Enable the GPIOA peripheral
+//	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+//
+//	// Connect MCO1 pin to AF0
+//	// Connect to AF0 is default after reset
+//	// GPIO_PinAFConfig(GPIOA, GPIO_PinSource8, GPIO_AF_MCO);
+//
+//	// Configure MCO1 pin(PA8) in alternate function
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//
+//	// HSI clock selected to output on MCO1 pin(PA8)
+//	RCC_MCO1Config(RCC_MCO1Source_HSI, RCC_MCO1Div_1 );
+//}
 /**
  * @brief 	Turn off clock (XCLK from Camera Module) PA8 (MCO0),
  * 		Configure the PA8 as output
  * @param	None
  * @retval	None
  */
-void XCLK_OFF(void)
-{
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-}
-
+//void XCLK_OFF(void)
+//{
+//	GPIO_InitTypeDef GPIO_InitStructure;
+//
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//}
 /**
  * @brief  Delay for SCCB/I2C interface
  * @param  Time: time for delay
@@ -561,7 +616,7 @@ static ErrorStatus OV7670_XCLK_Conf(void)
 	ErrorStatus status = ERROR;
 	FlagStatus HSI_Status = RESET;
 
-	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
 
 	// Enable high speed internal 16MHz oscillator *******************************
 	RCC_HSICmd(ENABLE);
@@ -591,13 +646,14 @@ static ErrorStatus OV7670_XCLK_Conf(void)
 	// GPIO_PinAFConfig(GPIOA, GPIO_PinSource8, GPIO_AF_MCO);
 
 	// Configure MCO1 pin(PA8) in alternate function
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	palSetPadMode(GPIOA, 8, PAL_MODE_ALTERNATE(0) | PAL_STM32_OSPEED_HIGHEST);
 	// HSI clock selected to output on MCO1 pin(PA8)
 	RCC_MCO1Config(RCC_MCO1Source_HSI, RCC_MCO1Div_1 );
 

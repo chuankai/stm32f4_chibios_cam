@@ -113,7 +113,6 @@
   */ 
 
 /* Includes ------------------------------------------------------------------*/
-#include "stlibdef.h"
 #include "stm32f4xx_dma.h"
 #include "stm32f4xx_rcc.h"
 
