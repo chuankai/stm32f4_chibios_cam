@@ -27,7 +27,8 @@ static msg_t logServerThrd(void *arg);
 
 void createLogServerThrd(void)
 {
-	chThdCreateStatic(waLogServerThread, sizeof(waLogServerThread), LOWPRIO,logServerThrd, NULL);
+	chThdCreateStatic(waLogServerThread, sizeof(waLogServerThread), LOWPRIO,
+			logServerThrd, NULL );
 }
 
 static msg_t logServerThrd(void *arg)
@@ -37,31 +38,23 @@ static msg_t logServerThrd(void *arg)
 	(void) arg;
 	chRegSetThreadName("log");
 
-	sdStart(&SD2, NULL);
-	palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
-	palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
-
 	chprintf((BaseChannel *) &SD2, "Log server started\r\n");
-
-//	chPoolInit(&logMP, LOG_MSG_MAX_LENGTH, NULL);
 
 	for (i = 0; i < LOG_MSG_MP_SIZE; i++)
 	{
-	    chPoolFree(&logMP, logMPbuffer[i]);
+		chPoolFree(&logMP, logMPbuffer[i]);
 	}
-
-//	chMBInit(&logMB, logmsgbuf, sizeof(logmsgbuf));
 
 	msg_t m, res;
 
 	while (TRUE)
 	{
-		 res = chMBFetch(&logMB, &m, TIME_INFINITE);
-		 if (res == RDY_OK)
-		 {
-				chprintf((BaseChannel *) &SD2,(char *)m);
-				chPoolFree(&logMP, (void *)m);
-		 }
+		res = chMBFetch(&logMB, &m, TIME_INFINITE );
+		if (res == RDY_OK)
+		{
+			chprintf((BaseChannel *) &SD2, (char *) m);
+			chPoolFree(&logMP, (void *) m);
+		}
 	}
 
 	return -1;
@@ -71,11 +64,11 @@ void logmsg(char *str)
 {
 	msg_t m;
 
-	m = (msg_t)chPoolAlloc(&logMP);
-	if ((void *)m != NULL)
+	m = (msg_t) chPoolAlloc(&logMP);
+	if ((void *) m != NULL )
 	{
-		strncpy((char *)m, str, LOG_MSG_MAX_LENGTH);
-		((char *)m)[LOG_MSG_MAX_LENGTH - 1] = '\0';
+		strncpy((char *) m, str, LOG_MSG_MAX_LENGTH);
+		((char *) m)[LOG_MSG_MAX_LENGTH - 1] = '\0';
 		chMBPost(&logMB, m, TIME_IMMEDIATE );
 	}
 }

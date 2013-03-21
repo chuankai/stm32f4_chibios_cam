@@ -31,6 +31,7 @@
 #include "SSD1289.h"
 #include "cam.h"
 #include "logserver.h"
+#include "shellserver.h"
 
 /*
  * Application entry point.
@@ -48,15 +49,17 @@ int main(void)
 	halInit();
 	chSysInit();
 
+//	chprintf((BaseChannel *) &SD2, "main\r\n");
+//	createLogServerThrd();
+
+	createShell();
+
 	/*
 	 * Initialize the LCD
 	 */
-	LCD_Init_SSD1289();
-	LCD_Clear(0x07E0);
-
+//	LCD_Init_SSD1289();
+//	LCD_Clear(0x07E0);
 //	CreateCamThread();
-
-	createLogServerThrd();
 
 	/*
 	 * Normal main() thread activity, in this demo it does nothing except
@@ -67,9 +70,8 @@ int main(void)
 	while (TRUE)
 	{
 		chThdSleepMilliseconds(1000);
-		//LOGMSG("D: %d", 1);
-		malloc("10");
-		logmsg("main loop\r\n");
+//		chprintf((BaseChannel *) &SD2, "main loop\r\n");
+//		logmsg("main loop\r\n");
 	}
 }
 

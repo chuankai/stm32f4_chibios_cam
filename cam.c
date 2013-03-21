@@ -30,7 +30,7 @@ static msg_t CamThread(void *arg)
 	I2CConfig ic;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	chprintf((BaseChannel *) &SD2, "CamThread\r\n");
+//	chprintf((BaseChannel *) &SD2, "CamThread\r\n");
 	(void) arg;
 
 	chRegSetThreadName("cam");
