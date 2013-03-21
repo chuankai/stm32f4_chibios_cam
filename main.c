@@ -25,11 +25,12 @@
  for full details of how and when the exception can be applied.
  */
 
+#include <stdlib.h>
 #include "ch.h"
 #include "hal.h"
-#include "chprintf.h"
 #include "SSD1289.h"
 #include "cam.h"
+#include "logserver.h"
 
 /*
  * Application entry point.
@@ -48,24 +49,14 @@ int main(void)
 	chSysInit();
 
 	/*
-	 * Activates the serial driver 2 using the driver default configuration.
-	 * PA2(TX) and PA3(RX) are routed to USART2.
-	 */
-	sdStart(&SD2, NULL);
-	palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
-	palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
-	/*
 	 * Initialize the LCD
 	 */
 	LCD_Init_SSD1289();
 	LCD_Clear(0x07E0);
 
-	/*
-	 * Creates the camera thread.
-	 */
-	CreateCamThread();
+//	CreateCamThread();
 
-//	chprintf((BaseChannel *) &SD2, "Initialization done\r\n");
+	createLogServerThrd();
 
 	/*
 	 * Normal main() thread activity, in this demo it does nothing except
@@ -75,7 +66,10 @@ int main(void)
 	 */
 	while (TRUE)
 	{
-		chThdSleepMilliseconds(500);
+		chThdSleepMilliseconds(1000);
+		//LOGMSG("D: %d", 1);
+		malloc("10");
+		logmsg("main loop\r\n");
 	}
 }
 

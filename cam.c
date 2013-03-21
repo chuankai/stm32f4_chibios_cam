@@ -10,7 +10,6 @@
 #include "hal.h"
 #include "chprintf.h"
 #include "cam.h"
-#include "utility.h"
 #include "OV7670.h"
 
 #define HOST_I2C                      	I2C2
@@ -61,7 +60,7 @@ static msg_t CamThread(void *arg)
 	i2cStart(&I2CD2, &ic);
 
 	err = Camera_Init();
-	ASSERT(err);
+//	ASSERT(err);
 
 	NVIC_InitStructure.NVIC_IRQChannel = DCMI_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;

@@ -96,7 +96,7 @@ CSRC = $(PORTSRC) \
 	   $(STLIB)/src/misc.c \
 	   cam.c \
 	   OV7670.c \
-#	   utility.c
+	   logserver.c
 
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
