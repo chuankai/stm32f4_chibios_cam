@@ -1,8 +1,8 @@
 #include "stm32f4xx_conf.h"
 #include "ch.h"
 #include "hal.h"
-#include "chprintf.h"
 #include "OV7670.h"
+#include "i2cutil.h"
 
 #define CAM_I2C_ADDR		0x21
 
@@ -203,40 +203,9 @@ const uint8_t InitBuffer2[4][2] =
 static void Camera_HW_Init(void);
 static void Delay_us(uint16_t Time);
 static ErrorStatus OV7670_XCLK_Conf(void);
-static int16_t I2C_Write(uint16_t I2CAddr, uint8_t Address, uint8_t Value);
-static int16_t I2C_Read(uint16_t I2CAddr, uint8_t *Value);
 
 /* Private functions -------------------------------------------------- -------*/
-static int16_t I2C_Write(uint16_t I2CAddr, uint8_t Address, uint8_t Value)
-{
-	msg_t err = RDY_OK;
-	uint8_t txbuf[2];
 
-	txbuf[0] = Address;
-	txbuf[1] = Value;
-	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0,
-			MS2ST(50) );
-
-	return err;
-}
-
-static int16_t I2C_Read(uint16_t I2CAddr, uint8_t *Value)
-{
-	msg_t err;
-	uint8_t txbuf[1], rxbuf[1];
-
-	txbuf[0] = 0x0A;
-	err = i2cMasterTransmitTimeout(&I2CD2, I2CAddr, txbuf, sizeof(txbuf), 0, 0,
-			MS2ST(50) );
-	if (err != RDY_OK)
-		return err;
-	err = i2cMasterReceiveTimeout(&I2CD2, I2CAddr, rxbuf, sizeof(rxbuf),
-			MS2ST(50) );
-	if (err == RDY_OK)
-		*Value = rxbuf[0];
-
-	return err;
-}
 
 /**
  * @brief 	Initialize CMOS VGA Camera Module OV7670
@@ -253,8 +222,6 @@ ErrorStatus Camera_Init(void)
 	Camera_HW_Init();
 
 	RetState = Camera_ReadReg(0x0A);
-	if (RetState->State == SUCCESS)
-		chprintf((BaseChannel *) &SD2, "PID:%d\r\n", RetState->Data);
 
 	// Reset all Camera Module registers to the default value
 	Camera_Reset();
@@ -303,7 +270,6 @@ ErrorStatus Camera_Init(void)
 	Status = SUCCESS;
 #endif
 
-	chprintf((BaseChannel *) &SD2, "Cam Init Res:%d\r\n", Status);
 	return (Status);
 }
 
@@ -348,7 +314,7 @@ ReturnState *Camera_ReadReg(uint8_t Address)
 	returnState.Data = 0x00;
 	returnState.State = ERROR;
 
-	err = I2C_Read(CAM_I2C_ADDR, &val);
+	err = I2C_Read(CAM_I2C_ADDR, Address, &val);
 	if (err == 0)
 	{
 		returnState.Data = val;
@@ -659,3 +625,35 @@ static ErrorStatus OV7670_XCLK_Conf(void)
 
 	return (status);
 }
+
+//CH_IRQ_HANDLER(DMA2_Stream7_IRQHandler)
+//{
+////	uint16_t i;
+//	// Test on DMA Stream Transfer Complete interrupt
+//	if(DMA_GetITStatus(DMA2_Stream7, DMA_Camera_IT_TCIF))
+//	{
+////		LCD_REG = 0x0022;
+////		for(i = 0; i < BuffSize; i++)
+////			LCD_RAM = RAM_Buffer[i];
+//
+//		// Clear DMA Stream Transfer Complete interrupt pending bit
+//		DMA_ClearITPendingBit(DMA2_Stream7, DMA_Camera_IT_TCIF);
+//	}
+//}
+
+CH_IRQ_HANDLER(DCMI_IRQHandler)
+{
+//	uint16_t i;
+
+	if(DCMI_GetITStatus(DCMI_IT_FRAME))
+	{
+//		LCD_REG = 0x0022;
+//		for(i = 0; i < BuffSize; i++)
+//			LCD_RAM = RAM_Buffer[i];
+//		for(i = 0; i < 28800; i++)
+//			LCD_RAM = 0x0000;
+
+	 	DCMI_ClearITPendingBit(DCMI_IT_FRAME);
+	}
+}
+

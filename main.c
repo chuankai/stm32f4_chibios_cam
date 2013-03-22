@@ -50,16 +50,16 @@ int main(void)
 	chSysInit();
 
 //	chprintf((BaseChannel *) &SD2, "main\r\n");
-//	createLogServerThrd();
+	createLogServerThrd();
 
 	createShell();
 
 	/*
 	 * Initialize the LCD
 	 */
-//	LCD_Init_SSD1289();
-//	LCD_Clear(0x07E0);
-//	CreateCamThread();
+	LCD_Init_SSD1289();
+	LCD_Clear(0x07E0);
+	CreateCamThread();
 
 	/*
 	 * Normal main() thread activity, in this demo it does nothing except
@@ -69,9 +69,9 @@ int main(void)
 	 */
 	while (TRUE)
 	{
+		uint8_t i;
 		chThdSleepMilliseconds(1000);
-//		chprintf((BaseChannel *) &SD2, "main loop\r\n");
-//		logmsg("main loop\r\n");
+		LOGMSG("main loop %d\r\n", i++);
 	}
 }
 

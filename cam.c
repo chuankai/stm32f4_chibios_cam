@@ -23,14 +23,13 @@
 #define HOST_I2C_SCL_PINSRC           	GPIO_PinSource10
 #define HOST_I2C_SDA_PINSRC           	GPIO_PinSource11
 
-static WORKING_AREA(waCamThread, 128);
+static WORKING_AREA(waCamThread, 512);
 static msg_t CamThread(void *arg)
 {
 	uint32_t err;
 	I2CConfig ic;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-//	chprintf((BaseChannel *) &SD2, "CamThread\r\n");
 	(void) arg;
 
 	chRegSetThreadName("cam");
@@ -68,7 +67,7 @@ static msg_t CamThread(void *arg)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	DCMI_ITConfig(DCMI_IT_FRAME, ENABLE);
+	DCMI_ITConfig(DCMI_IT_FRAME, DISABLE);	//FIXME
 	DCMI_Cmd(ENABLE);
 	DCMI_CaptureCmd(ENABLE);
 	DMA_Cmd(DMA_CameraToRAM_Stream, ENABLE);
