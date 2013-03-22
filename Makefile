@@ -87,6 +87,7 @@ CSRC = $(PORTSRC) \
        $(BOARDSRC) \
        $(CHIBIOS)/os/various/chprintf.c \
        $(CHIBIOS)/os/various/shell.c \
+       $(CHIBIOS)/os/various/syscalls.c \
        main.c \
 	   SSD1289.c \
 	   AsciiLib.c \
@@ -98,7 +99,8 @@ CSRC = $(PORTSRC) \
 	   cam.c \
 	   OV7670.c \
 	   logserver.c \
-	   shellserver.c
+	   shellserver.c \
+	   i2cutil.c
 
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

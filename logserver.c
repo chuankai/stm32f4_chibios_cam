@@ -9,27 +9,20 @@
 #include "ch.h"
 #include "chprintf.h"
 #include "hal.h"
+#include "logserver.h"
 
 #define LOG_MSG_MB_SIZE 			64
 #define LOG_MSG_MP_SIZE				64
-#define LOG_MSG_MAX_LENGTH			80
 
 static char logMPbuffer[LOG_MSG_MP_SIZE][LOG_MSG_MAX_LENGTH];
-static MEMORYPOOL_DECL(logMP, LOG_MSG_MAX_LENGTH, NULL);
 static msg_t logMBbuffer[LOG_MSG_MB_SIZE];
+static WORKING_AREA(waLogServerThread, 512);
+static MEMORYPOOL_DECL(logMP, LOG_MSG_MAX_LENGTH, NULL);
 static MAILBOX_DECL(logMB, logMBbuffer, LOG_MSG_MB_SIZE);
 
 char msgbuf[LOG_MSG_MAX_LENGTH];
 
-static WORKING_AREA(waLogServerThread, 128);
-
 static msg_t logServerThrd(void *arg);
-
-void createLogServerThrd(void)
-{
-	chThdCreateStatic(waLogServerThread, sizeof(waLogServerThread), LOWPRIO,
-			logServerThrd, NULL );
-}
 
 static msg_t logServerThrd(void *arg)
 {
@@ -58,6 +51,12 @@ static msg_t logServerThrd(void *arg)
 	}
 
 	return -1;
+}
+
+void createLogServerThrd(void)
+{
+	chThdCreateStatic(waLogServerThread, sizeof(waLogServerThread), LOWPRIO,
+			logServerThrd, NULL );
 }
 
 void logmsg(char *str)

@@ -13,10 +13,8 @@
 #include <string.h>
 #include "ch.h"
 
-extern Mailbox logMB;
-extern MemoryPool logMP;
+#define LOG_MSG_MAX_LENGTH			80
 
-//TODO: snprintf requires syscall.c
 extern char msgbuf[];
 #define LOGMSG(...)		{ snprintf(msgbuf, 80, __VA_ARGS__); \
 						  logmsg(msgbuf); }
