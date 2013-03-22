@@ -5,32 +5,61 @@
  *      Author: Kyle.Lin
  */
 
+#include "stdlib.h"
 #include "ch.h"
 #include "hal.h"
 #include "shell.h"
 #include "chprintf.h"
+#include "i2cutil.h"
+#include "logserver.h"
 
 static WORKING_AREA(waShellServerThread, 512);
 static ShellConfig cfg;
 
-void test_cmd(BaseChannel *chp, int argc, char *argv[]);
+static void i2r_cmd(BaseChannel *chp, int argc, char *argv[]);
+static void log_cmd(BaseChannel *chp, int argc, char *argv[]);
 
 static ShellCommand cmdtbl[] =
 {
-    { "test", test_cmd },
-    { NULL, NULL }
-};
+{ "i2r", i2r_cmd },
+{ "log", log_cmd },
+{ NULL, NULL } };
 
-void test_cmd(BaseChannel *chp, int argc, char *argv[])
+static void i2r_cmd(BaseChannel *chp, int argc, char *argv[])
 {
-	uint8_t i;
-
-	chprintf(chp, "test: ");
-	for (i = 0; i < argc; i++)
+	if (argc < 2)
 	{
-		chprintf(chp, "%d ", *argv[i]);
+		chprintf(chp, "Usage: i2r addr reg\r\n");
 	}
-	chprintf(chp, "OK\r\n");
+	else
+	{
+		uint16_t err;
+		uint8_t val;
+
+		err = I2C_Read(atoi(argv[0]), atoi(argv[1]), &val);
+		if (err == 0)
+		{
+			chprintf(chp, "%02X\r\n", val);
+			chprintf(chp, "OK\r\n");
+		}
+		else
+		{
+			chprintf(chp, "ERR:%d\r\n", err);
+
+		}
+	}
+}
+
+static void log_cmd(BaseChannel *chp, int argc, char *argv[])
+{
+	if (argc < 1)
+	{
+		chprintf(chp, "Usage: log [0|1]\r\n");
+	}
+	else
+	{
+		logEnable(atoi(argv[0]));
+	}
 }
 
 void createShell(void)
@@ -40,5 +69,6 @@ void createShell(void)
 	cfg.sc_channel = (BaseChannel *) &SD2;
 	cfg.sc_commands = cmdtbl;
 
-	shellCreateStatic(&cfg, waShellServerThread, sizeof(waShellServerThread), 32);
+	shellCreateStatic(&cfg, waShellServerThread, sizeof(waShellServerThread),
+			32);
 }

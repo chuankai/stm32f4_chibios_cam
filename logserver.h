@@ -17,9 +17,10 @@
 
 extern char msgbuf[];
 #define LOGMSG(...)		{ snprintf(msgbuf, 80, __VA_ARGS__); \
-						  logmsg(msgbuf); }
+						  logMsg(msgbuf); }
 
 void createLogServerThrd(void);
-void logmsg(char *str);
+void logMsg(char *str);
+void logEnable(uint8_t en);
 
 #endif /* LOGSERVER_H_ */

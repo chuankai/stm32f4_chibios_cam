@@ -19,6 +19,7 @@ static msg_t logMBbuffer[LOG_MSG_MB_SIZE];
 static WORKING_AREA(waLogServerThread, 512);
 static MEMORYPOOL_DECL(logMP, LOG_MSG_MAX_LENGTH, NULL);
 static MAILBOX_DECL(logMB, logMBbuffer, LOG_MSG_MB_SIZE);
+static uint8_t logenabled = 1;
 
 char msgbuf[LOG_MSG_MAX_LENGTH];
 
@@ -59,16 +60,24 @@ void createLogServerThrd(void)
 			logServerThrd, NULL );
 }
 
-void logmsg(char *str)
+void logEnable(uint8_t en)
 {
-	msg_t m;
+	logenabled = en;
+}
 
-	m = (msg_t) chPoolAlloc(&logMP);
-	if ((void *) m != NULL )
+void logMsg(char *str)
+{
+	if (logenabled)
 	{
-		strncpy((char *) m, str, LOG_MSG_MAX_LENGTH);
-		((char *) m)[LOG_MSG_MAX_LENGTH - 1] = '\0';
-		chMBPost(&logMB, m, TIME_IMMEDIATE );
+		msg_t m;
+
+		m = (msg_t) chPoolAlloc(&logMP);
+		if ((void *) m != NULL )
+		{
+			strncpy((char *) m, str, LOG_MSG_MAX_LENGTH);
+			((char *) m)[LOG_MSG_MAX_LENGTH - 1] = '\0';
+			chMBPost(&logMB, m, TIME_IMMEDIATE );
+		}
 	}
 }
 
